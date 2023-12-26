@@ -19,7 +19,7 @@
 		},
 		{
 			"menu2.0": [{
-					"type": "reviewtu",
+					"type": "review_tu",
 					"text": "Получить бонус за отзыв",
 					"answer": "answer2.1"
 				},
@@ -33,11 +33,30 @@
 		,
 		{
 			"menu3.0": [{
-					"type": "reviewtu",
+					"type": "review_uc",
 					"text": "Получить бонус за отзыв",
 					"answer": "answer2.1"
 				}
 			]
 		}
+		,
+		{
+			"menu4.0": [{
+					"type": "review_sp",
+					"text": "Получить бонус за отзыв",
+					"answer": "answer2.1"
+				}
+			]
+		}
+		,
+		{
+			"menu5.0": [{
+					"type": "review_su",
+					"text": "Получить бонус за отзыв",
+					"answer": "answer2.1"
+				}
+			]
+		}
+		
 	]
 }

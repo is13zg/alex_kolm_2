@@ -76,13 +76,10 @@ def form_tlg_menu_items(menu_from_json: list = None, msgs_ids: list = None) -> I
         create_bot.print_error_message(__name__, inspect.currentframe().f_code.co_name, e)
 
 
-
-
-@router.message(WaitReview.GET_REVIEW_PHOTO,F.text.casefold() == "выход")
+@router.message(WaitReview.GET_REVIEW_PHOTO, F.text.casefold() == "выход")
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     try:
         if not message.photo:
-
             await state.clear()
             await message.answer(text="Вы вышли в основное меню.")
             await message.answer(text="<pre>Выберите пособие:</pre>", parse_mode="HTML",
@@ -92,17 +89,20 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
     except Exception as e:
         await create_bot.send_error_message(__name__, inspect.currentframe().f_code.co_name, e)
 
+
 @router.message(WaitReview.GET_REVIEW_PHOTO)
 async def command_start_handler(message: Message, state: FSMContext) -> None:
     try:
         if not message.photo:
             await state.set_state(WaitReview.GET_REVIEW_PHOTO)
-            await message.answer("Пришлите фото/скриншот отзыва чтобы получить подарок! Или напишите ВЫХОД чтобы выйти в меню")
+            await message.answer(
+                "Пришлите фото/скриншот отзыва чтобы получить подарок! Или напишите ВЫХОД чтобы выйти в меню")
         else:
+            flag = await state.get_data()
             await message.answer(text="Фото получено, будет выполнена проверка отзыва.")
             await state.clear()
-            await asyncio.sleep(random.randint(20,300))
-            await message.answer(text=init_data.answer_json["answer_bonus_tablica"]["text"])
+            await asyncio.sleep(random.randint(20, 300))
+            await message.answer(text=init_data.answer_json["answer_bonus_"+flag['type']]["text"])
             await message.answer(text="<pre>Выберите пособие:</pre>", parse_mode="HTML",
                                  reply_markup=form_tlg_menu_items(get_needed_menu_from_json("menu0")))
 
@@ -126,6 +126,7 @@ async def process_callback_delete_msg(callback_query: CallbackQuery):
 async def universal_callback_response(callback_query: CallbackQuery, state: FSMContext):
     try:
         cd_ls = callback_query.data.split("_")
+        print(cd_ls)
 
         if cd_ls[1] == "menu":
             await bot.send_message(callback_query.from_user.id,
@@ -145,10 +146,11 @@ async def universal_callback_response(callback_query: CallbackQuery, state: FSMC
                                    reply_markup=form_tlg_menu_items())
             await callback_query.answer()
             return
-        elif cd_ls[1] == "reviewtu":
-            await bot.send_message(callback_query.from_user.id, init_data.answer_json[cd_ls[2]]["text"],
+        elif cd_ls[1] == "review":
+            await bot.send_message(callback_query.from_user.id, init_data.answer_json[cd_ls[3]]["text"],
                                    reply_markup=form_tlg_menu_items())
             await state.set_state(WaitReview.GET_REVIEW_PHOTO)
+            await state.set_data({"type": cd_ls[2]})
             return
     except Exception as e:
         await create_bot.send_error_message(__name__, inspect.currentframe().f_code.co_name, e)
@@ -166,9 +168,6 @@ async def command_start_handler(message: Message) -> None:
         return
     except Exception as e:
         await create_bot.send_error_message(__name__, inspect.currentframe().f_code.co_name, e)
-
-
-
 
 
 @router.message(Command(commands=["сообщ", "msg"]))
