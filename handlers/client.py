@@ -82,7 +82,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
         if not message.photo:
             await state.clear()
             await message.answer(text="Вы вышли в основное меню.")
-            await message.answer(text="<pre>Выберите пособие:</pre>", parse_mode="HTML",
+            await message.answer(text="<b><i><u>Выберите пособие:</b></i></u>", parse_mode="HTML",
                                  reply_markup=form_tlg_menu_items(get_needed_menu_from_json("menu0")))
 
         return
@@ -103,7 +103,7 @@ async def command_start_handler(message: Message, state: FSMContext) -> None:
             await state.clear()
             await asyncio.sleep(random.randint(20, 300))
             await message.answer(text=init_data.answer_json["answer_bonus_"+flag['type']]["text"])
-            await message.answer(text="<pre>Выберите пособие:</pre>", parse_mode="HTML",
+            await message.answer(text="<b><i><u>Выберите пособие:</b></i></u>", parse_mode="HTML",
                                  reply_markup=form_tlg_menu_items(get_needed_menu_from_json("menu0")))
 
         return
@@ -126,17 +126,16 @@ async def process_callback_delete_msg(callback_query: CallbackQuery):
 async def universal_callback_response(callback_query: CallbackQuery, state: FSMContext):
     try:
         cd_ls = callback_query.data.split("_")
-        print(cd_ls)
 
         if cd_ls[1] == "menu":
             await bot.send_message(callback_query.from_user.id,
-                                   text="<pre>Вы выбрали пункт меню:\n" + init_data.menu_names[cd_ls[2]] + "</pre>",
+                                   text="<b><i><u>Вы выбрали пункт меню:\n" + init_data.menu_names[cd_ls[2]] + "</u></i></b>",
                                    parse_mode="HTML",
                                    reply_markup=form_tlg_menu_items(get_needed_menu_from_json(cd_ls[2])))
             await callback_query.answer()
         elif cd_ls[1] == "text":
             id1 = await bot.send_message(callback_query.from_user.id,
-                                         text=f"<pre>{init_data.answer_names[cd_ls[2]]}</pre>",
+                                         text=f"<b><i><u>{init_data.answer_names[cd_ls[2]]}</u></i></b>",
                                          parse_mode="HTML")
             await bot.send_message(callback_query.from_user.id, text=init_data.answer_json[cd_ls[2]]["text"],
                                    reply_markup=form_tlg_menu_items(msgs_ids=[str(id1.message_id)]))
@@ -163,7 +162,7 @@ async def command_start_handler(message: Message) -> None:
         if not init_data.db.reg_user_exists(message.from_user.id):
             init_data.db.add_reg_user_to_db(message.from_user.id)
         # отдаем пользователю меню
-        await message.answer(text="<pre>Выберите пособие:</pre>", parse_mode="HTML",
+        await message.answer(text="<b><i><u>Выберите пособие:</u></i></b>", parse_mode="HTML",
                              reply_markup=form_tlg_menu_items(get_needed_menu_from_json("menu0")))
         return
     except Exception as e:
